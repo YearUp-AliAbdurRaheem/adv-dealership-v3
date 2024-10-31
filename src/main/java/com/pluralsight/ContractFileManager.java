@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import com.oracle.graal.compiler.enterprise.l;
 
 public class ContractFileManager {
     private static final String FILENAME = "contracts.txt";
@@ -55,8 +54,10 @@ public class ContractFileManager {
 
             bWriter.write(line.toString());
             bWriter.newLine();
-        } catch (IOException e) {
-            System.out.println("Error saving contract: " + e.getMessage());
+            bWriter.close();
+        } 
+        catch (IOException e) {
+            System.out.println("Error saving contract: " + e.getMessage()); // LOOKINTO: How can i close the bWriter here?
         }
     }
 }
