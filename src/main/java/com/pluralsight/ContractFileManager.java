@@ -6,7 +6,7 @@ import java.io.IOException;
 
 
 public class ContractFileManager {
-    private static final String FILENAME = "contracts.txt";
+    private static final String FILENAME = "contract.csv";
 
     public void saveContract(Contract contract) {
         try (BufferedWriter bWriter = new BufferedWriter(new FileWriter(FILENAME, true))) {

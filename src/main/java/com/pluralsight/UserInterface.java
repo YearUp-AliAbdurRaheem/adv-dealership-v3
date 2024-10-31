@@ -79,11 +79,11 @@ public class UserInterface {
         do {
             input = Console.PromptForString("Enter VIN of the vehicle to sell/lease (or 'v' to view all vehicles or 'q' to cancel): ");
             if (input.equalsIgnoreCase("q")) return;
-            if (input.equalsIgnoreCase("v")) {displayVehicles(dealership.getAllVehicles()); continue;}
+            if (input.equalsIgnoreCase("v")) {displayVehicles(dealership.getAllVehicles()); input = ""; continue;}
 
             try {
                 vin = Integer.parseInt(input);
-                
+
                 Vehicle vehicleToSell = dealership.getVehicleByVin(vin);
                 if (vehicleToSell == null) {
                     System.out.println("Vehicle not found. Please try again.");
