@@ -30,8 +30,33 @@ public class ContractFileManager {
                 .append("100.00|")  // Recording fee is this arbitrary?
                 .append(SalesContract.getProcessingFee()).append("|")
                 .append(contract.getTotalPrice()).append("|")
-                .append(((SalesContract)contract).isFinanced() ? "YES" : "NO")
-                .append(contract.)
+                .append(((SalesContract)contract).isFinanced() ? "YES|" : "NO|") // Casting contract to SalesContract to access isFinanced() method
+                .append(((SalesContract)contract).isFinanced() ? contract.getMonthlyPayment() : 0.0); // 0 if not financed
             }
+
+            else if (contract instanceof LeaseContract) {
+                line.append("LEASE|")
+                .append(contract.getDate()).append("|")
+                .append(contract.getCustomerName()).append("|")
+                .append(contract.getCustomerEmail()).append("|")
+                .append(contract.getVehicle().getVin()).append("|")
+                .append(contract.getVehicle().getYear()).append("|")
+                .append(contract.getVehicle().getMake()).append("|")
+                .append(contract.getVehicle().getModel()).append("|")
+                .append(contract.getVehicle().getVehicleType()).append("|")
+                .append(contract.getVehicle().getColor()).append("|")
+                .append(contract.getVehicle().getOdometer()).append("|")
+                .append(String.format("%.2f", contract.getVehicle().getPrice())).append("|")
+                .append(((LeaseContract)contract).getExpectedEndingValue()).append("|")
+                .append(((LeaseContract)contract).getLeaseFee()).append("|")
+                .append(contract.getTotalPrice()).append("|")
+                .append(contract.getMonthlyPayment());
+            }
+
+            bWriter.write(line.toString());
+            bWriter.newLine();
+        } catch (IOException e) {
+            System.out.println("Error saving contract: " + e.getMessage());
+        }
     }
 }
