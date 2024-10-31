@@ -43,6 +43,7 @@ public class UserInterface {
                 7 - List ALL vehicles
                 8 - Add a vehicle
                 9 - Remove a vehicle
+                10 - Sell/Lease a Vehicle
                 99 - Quit
 
                 >>>\s""";
@@ -63,10 +64,14 @@ public class UserInterface {
                 case 7 -> processGetAllVehiclesRequest();
                 case 8 -> processAddVehicleRequest();
                 case 9 -> processRemoveVehicleRequest();
+                case 10 -> processSellLeaseRequest();
                 case 99 -> System.exit(0);
                 default -> System.out.println("Invalid selection. Please try again.");
             }
         } while (selection != 99);
+    }
+
+    public void processSellLeaseRequest() {
     }
 
     public void processGetByPriceRequest() {
@@ -140,7 +145,7 @@ public class UserInterface {
 
     public void processGetByYearRequest() {
         String input = "";
-        int minYear = 0, maxYear = 0;
+        int minYear = 1900, maxYear = 0;
 
         do {
             input = Console.PromptForString("Enter minimum year (or 'q' to cancel): ");
@@ -150,8 +155,8 @@ public class UserInterface {
             try {
                 minYear = Integer.parseInt(input);
                 // Year Validation
-                if (minYear < 0) {
-                    System.out.println("Year cannot be negative. Please try again.");
+                if (!isValidYear(minYear)) {
+                    System.out.println("Year cannot be less than 1900. Please try again.");
                     input = ""; // Reset input
                     continue;
                 }
@@ -171,8 +176,8 @@ public class UserInterface {
             try {
                 maxYear = Integer.parseInt(input);
                 // Year Validation
-                if (maxYear < 0) {
-                    System.out.println("Year cannot be negative. Please try again.");
+                if (!isValidYear(maxYear)) {
+                    System.out.println("Year cannot be less than 1900. Please try again.");
                     input = ""; // Reset input
                     continue;
                 }
@@ -311,8 +316,8 @@ public class UserInterface {
             if (yearInput.equalsIgnoreCase("q")) return;
             try {
                 year = Integer.parseInt(yearInput);
-                if (year <= 0) {
-                    System.out.println("Year must be positive.");
+                if (!isValidYear(year)) {
+                    System.out.println("Year cannot be less than 1900. Please try again.");
                     continue;
                 }
                 break;
@@ -393,10 +398,15 @@ public class UserInterface {
         }
     }
 
-    private static final String[] VALID_VEHICLE_TYPES = {"car", "truck", "suv", "van"}; // Helper section to validate vehicle types
+    private static final String[] VALID_VEHICLE_TYPES = {"car", "truck", "suv", "van"}; // Helper section to validate stuff
 
     private boolean isValidVehicleType(String vehicleType) {
         return Arrays.stream(VALID_VEHICLE_TYPES)
                      .anyMatch(type -> type.equalsIgnoreCase(vehicleType)); // New type of stream :D
+    }
+
+    private boolean isValidYear(int year) {
+        int currentYear = java.time.Year.now().getValue();
+        return year >= 1900 && year <= currentYear + 1;  // Allow current year + 1 for newer models
     }
 }
