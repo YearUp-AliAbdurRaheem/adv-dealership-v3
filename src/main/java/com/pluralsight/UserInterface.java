@@ -72,6 +72,109 @@ public class UserInterface {
     }
 
     public void processSellLeaseRequest() {
+        int vin = 0;
+        String input;
+        // Get all the info we need from the user
+        // Get VIN
+        do {
+            input = Console.PromptForString("Enter VIN of the vehicle to sell/lease (or 'v' to view all vehicles or 'q' to cancel): ");
+            if (input.equalsIgnoreCase("q")) return;
+            if (input.equalsIgnoreCase("v")) {displayVehicles(dealership.getAllVehicles()); continue;}
+
+            try {
+                vin = Integer.parseInt(input);
+                
+                Vehicle vehicleToSell = dealership.getVehicleByVin(vin);
+                if (vehicleToSell == null) {
+                    System.out.println("Vehicle not found. Please try again.");
+                    input = ""; // Reset input
+                    continue;
+                }
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+                input = ""; // Reset input
+            }
+        } while (input.isEmpty());
+
+        // Get contract type
+        String contractType;
+        do {
+            contractType = Console.PromptForString("Enter contract type (sale/lease) (or 'q' to cancel): ");
+            if (contractType.equalsIgnoreCase("q")) return;
+            if (!contractType.equalsIgnoreCase("sale") && !contractType.equalsIgnoreCase("lease")) {
+                System.out.println("Invalid contract type. Please enter 'sale' or 'lease'.");
+                contractType = ""; // Reset input
+            }
+        } while (contractType.isEmpty());
+
+        // Get customer name
+        String customerName;
+        do {
+            customerName = Console.PromptForString("Enter customer name (or 'q' to cancel): ");
+            if (customerName.equalsIgnoreCase("q")) return;
+        } while (customerName.isEmpty());
+
+        // Get customer email
+        String customerEmail;
+        do {
+            customerEmail = Console.PromptForString("Enter customer email (or 'q' to cancel): ");
+            if (customerEmail.equalsIgnoreCase("q")) return;
+        } while (customerEmail.isEmpty());
+
+        // Get date
+        String date;
+        do {
+            date = Console.PromptForString("Enter date (YYYYMMDD) (or 'q' to cancel): ");
+            if (date.equalsIgnoreCase("q")) return;
+            
+            // Validate date format
+            if (date.length() != 8 || !date.matches("\\d{8}")) {
+                System.out.println("Invalid date format. Please use YYYYMMDD (e.g., 20210928)");
+                date = ""; // Reset input
+                continue;
+            }
+        } while (date.isEmpty());
+
+        Vehicle vehicle = dealership.getVehicleByVin(vin);
+        Contract contract;
+
+        // Create appropriate contract type
+        if (contractType.equalsIgnoreCase("sale")) {
+            String financeInput;
+            boolean isFinanced;
+            do {
+                financeInput = Console.PromptForString("Will this be financed? (yes/no) (or 'q' to cancel): ");
+                if (financeInput.equalsIgnoreCase("q")) return;
+                if (financeInput.equalsIgnoreCase("yes")) {
+                    isFinanced = true;
+                    break;
+                } else if (financeInput.equalsIgnoreCase("no")) {
+                    isFinanced = false;
+                    break;
+                }
+                System.out.println("Please enter 'yes' or 'no'.");
+            } while (true);
+
+            contract = new SalesContract(date, customerName, customerEmail, vehicle, isFinanced);
+        } else {
+            // Check if vehicle is too old for lease (more than 3yo)
+            if (java.time.Year.now().getValue() - vehicle.getYear() > 3) {
+                System.out.println("Vehicle is too old to lease (more than 3 years old).");
+                return;
+            }
+            contract = new LeaseContract(date, customerName, customerEmail, vehicle);
+        }
+
+        // Save contract and remove vehicle
+        new ContractFileManager().saveContract(contract);
+        dealership.removeVehicle(vehicle);
+        new DealershipFileManager().saveDealership(dealership);
+
+        // Display success message with contract details
+        System.out.printf("\nContract processed successfully!\n");
+        System.out.printf("Total Price: $%.2f\n", contract.getTotalPrice());
+        System.out.printf("Monthly Payment: $%.2f\n\n", contract.getMonthlyPayment());
     }
 
     public void processGetByPriceRequest() {

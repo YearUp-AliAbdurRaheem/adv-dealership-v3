@@ -1,10 +1,11 @@
 package com.pluralsight;
 
 public class LeaseContract extends Contract {
-    private static final double LEASE_FEE_RATE = 0.07;
-    private static final double EXPECTED_END_VALUE_RATE = 0.50;
-    private static final double FINANCE_RATE = 0.04;
-    private static final int LEASE_TERM_MONTHS = 36;
+    // These rates determine the lease costs
+    private static final double LEASE_FEE_RATE = 0.07;        // 7% of vehicle price
+    private static final double EXPECTED_END_VALUE_RATE = 0.50;  // 50% of vehicle price
+    private static final double FINANCE_RATE = 0.04;          // 4% yearly interest
+    private static final int LEASE_TERM_MONTHS = 36;          // the 3-year lease term
 
     private double expectedEndingValue;
     private double leaseFee;
@@ -26,7 +27,7 @@ public class LeaseContract extends Contract {
     @Override
     public double getTotalPrice() {
         double vehiclePrice = getVehicle().getPrice();
-        return (vehiclePrice - expectedEndingValue) + leaseFee;
+        return (vehiclePrice - expectedEndingValue) + leaseFee; // Do i even math what is this?
     }
 
     @Override
