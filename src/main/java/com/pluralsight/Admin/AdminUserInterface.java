@@ -17,6 +17,21 @@ public class AdminUserInterface {
     }
 
     public void display() {
+        AuthenticationManager authManager = new AuthenticationManager();
+        int tries = 3;
+        boolean authenticated = false;
+        
+        do {
+            System.out.println("Admin Login: " + tries + " tries remaining");
+            authenticated = authManager.login();
+            tries--;
+        } while (!authenticated && tries > 0);
+
+        if (!authenticated) {
+            System.out.println("Too many failed attempts. Exiting program.");
+            System.exit(0);
+        }
+
         String options = """
                 ADMIN INTERFACE
                 Please select from the following choices:
@@ -46,7 +61,7 @@ public class AdminUserInterface {
                 case 4 -> displayLastNSalesContracts(10);
                 case 5 -> displayAllLeaseContracts();
                 case 6 -> displayLastNLeaseContracts(10);
-                case 99 -> System.out.println("Goodbye!");
+                case 99 -> System.out.println("Safely exiting Admin Interface...");
                 default -> System.out.println("Invalid selection. Please try again.");
             }
         } while (selection != 99);

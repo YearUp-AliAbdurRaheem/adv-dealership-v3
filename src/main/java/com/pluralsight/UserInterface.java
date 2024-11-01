@@ -52,13 +52,21 @@ public class UserInterface {
 
                 >>>\s""";
 
-        int selection;
+        int selection = 0;
+        String input;
 
         // User Interface Loop
         do {
             contracts = new ContractFileManager().getAllContracts();
             System.out.println("Welcome to " + dealership.getName() + "!");
-            selection = Console.PromptForInt(options);
+            input = Console.PromptForString(options);
+            try {
+                selection = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+                input = "";
+                continue;
+            }
             switch (selection) {
                 case 1 -> processGetByPriceRequest();
                 case 2 -> processGetByMakeModelRequest();
@@ -72,9 +80,12 @@ public class UserInterface {
                 case 10 -> processSellLeaseRequest();
                 case 11 -> new AdminUserInterface().display();
                 case 99 -> System.exit(0);
-                default -> System.out.println("Invalid selection. Please try again.");
+                default -> {
+                    System.out.println("Invalid selection. Please try again.");
+                    input = "";
+                }
             }
-        } while (selection != 99);
+        } while (input.isEmpty() || selection != 99);
     }
 
     public void processSellLeaseRequest() {
