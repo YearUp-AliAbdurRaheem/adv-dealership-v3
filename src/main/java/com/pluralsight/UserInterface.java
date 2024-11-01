@@ -9,7 +9,7 @@ import com.pluralsight.Admin.AdminUserInterface;
 
 public class UserInterface {
     private Dealership dealership;
-    private List<Contract> contracts = new ContractFileManager().getAllContracts();
+    private List<Contract> contracts;
 
     public UserInterface() {
         // Constructor

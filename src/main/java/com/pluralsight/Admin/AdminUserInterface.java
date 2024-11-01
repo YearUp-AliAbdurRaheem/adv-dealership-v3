@@ -5,8 +5,6 @@ import com.pluralsight.ContractFileManager;
 import com.pluralsight.SalesContract;
 import com.pluralsight.LeaseContract;
 import com.pluralsight.utils.Console;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class AdminUserInterface {
