@@ -98,6 +98,13 @@ public class ContractFileManager {
                 .append(contract.getMonthlyPayment());
             }
 
+            for (AddOn addOn : contract.getAddOns()) {
+                line.append("|")
+                .append(addOn.getName())
+                .append("|")
+                .append(addOn.getPrice());
+            }
+
             bWriter.write(line.toString());
             bWriter.newLine();
             bWriter.close();

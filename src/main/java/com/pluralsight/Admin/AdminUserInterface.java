@@ -30,6 +30,8 @@ public class AdminUserInterface {
             System.exit(0);
         }
 
+        contractManager = new ContractFileManager(); // reload contracts
+
         String options = """
                 ADMIN INTERFACE
                 Please select from the following choices:

@@ -153,6 +153,35 @@ public class UserInterface {
             }
         } while (date.isEmpty());
 
+        // Add-on selection
+        List<AddOn> selectedAddOns = new ArrayList<>();
+        boolean selectingAddOns = true;
+
+        System.out.println("\nAvailable Add-ons:");
+        List<AddOn> availableAddOns = AddOnManager.getAvailableAddOns();
+        for (int i = 0; i < availableAddOns.size(); i++) {
+            System.out.printf("%d. %s%n", i + 1, availableAddOns.get(i));
+        }
+
+        while (selectingAddOns) {
+            String addOnInput = Console.PromptForString("\nSelect an add-on number (or 'done' to finish, 'q' to cancel): ");
+            if (addOnInput.equalsIgnoreCase("q")) return;
+            if (addOnInput.equalsIgnoreCase("done")) break;
+            
+            try {
+                int selection = Integer.parseInt(addOnInput) - 1;
+                if (selection >= 0 && selection < availableAddOns.size()) {
+                    AddOn selected = availableAddOns.get(selection);
+                    selectedAddOns.add(selected);
+                    System.out.printf("Added: %s%n", selected);
+                } else {
+                    System.out.println("Invalid selection. Please try again.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+            }
+        }
+
         Vehicle vehicle = dealership.getVehicleByVin(vin);
         Contract contract;
 
