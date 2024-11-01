@@ -4,9 +4,12 @@ import com.pluralsight.utils.Console;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import com.pluralsight.Admin.AdminUserInterface;
 
 public class UserInterface {
     private Dealership dealership;
+    private List<Contract> contracts = new ContractFileManager().getAllContracts();
 
     public UserInterface() {
         // Constructor
@@ -44,6 +47,7 @@ public class UserInterface {
                 8 - Add a vehicle
                 9 - Remove a vehicle
                 10 - Sell/Lease a Vehicle
+                11 - Admin Interface
                 99 - Quit
 
                 >>>\s""";
@@ -52,6 +56,7 @@ public class UserInterface {
 
         // User Interface Loop
         do {
+            contracts = new ContractFileManager().getAllContracts();
             System.out.println("Welcome to " + dealership.getName() + "!");
             selection = Console.PromptForInt(options);
             switch (selection) {
@@ -65,6 +70,7 @@ public class UserInterface {
                 case 8 -> processAddVehicleRequest();
                 case 9 -> processRemoveVehicleRequest();
                 case 10 -> processSellLeaseRequest();
+                case 11 -> new AdminUserInterface().display();
                 case 99 -> System.exit(0);
                 default -> System.out.println("Invalid selection. Please try again.");
             }

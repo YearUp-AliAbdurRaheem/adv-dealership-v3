@@ -14,7 +14,7 @@ public abstract class Contract {
     }
 
     // Abstract getters
-    abstract double getTotalPrice();
+    public abstract double getTotalPrice(); // its public so it can be accessed by the AdminUserInterface wich is in a different package.
     abstract double getMonthlyPayment();
 
     // Getters and setters
