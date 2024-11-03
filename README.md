@@ -11,15 +11,15 @@
 This is a dealership management application with the following features:
 
 1. **Vehicle Inventory Management**:
-   - Search for vehicles with multiple filters (e.g., make, model, year, price, mileage).
-   - Add, remove, sell, or lease vehicles from the inventory
+   - Search for **vehicles** with multiple **filters** (e.g., make, model, year, price, mileage).
+   - **Add**, **remove**, **sell**, or **lease** **vehicles** from the **inventory**
 2. **Admin Interface**:
-   - Secure, password-protected admin interface accessible only by authorized administrators.
-   - Support for multiple admin accounts, each with individual login credentials.
+   - _Secure_, _password-protected_ **admin interface** accessible only by authorized administrators. (created with an `addAdmin()` method)
+   - Support for **multiple admin accounts**, each with individual login credentials.
 3. **Security Features**:
-   - Passwords are stored as SHA-256 hashes for security; plaintext passwords are never stored.
+   - **Passwords** are stored as `SHA-256 hashes` for security; _plaintext passwords_ are **never** stored.
    - Password hashing is applied at account creation and every time a login attempt is made.
-   - To prevent unauthorized access, only 3 login attempts are allowed before further attempts are locked.
+   - To prevent unauthorized access, only `3` login attempts are allowed before further attempts are locked.
 
 ---
 
@@ -29,7 +29,7 @@ Explanation of the file and its format:
 
 1. **General Structure**:
    - The file contains a header row with dealership information, followed by rows representing individual vehicle entries.
-   - All data is contained within a single column, with values separated by the pipe symbol (|).
+   - All data is contained within a single column, with values separated by the pipe symbol `|`.
    
 2. **Header**:
     - The header row contains basic dealership information in the format: `Dealership Name | Address | Contact Number`
