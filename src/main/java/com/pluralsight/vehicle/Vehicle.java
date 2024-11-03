@@ -1,4 +1,4 @@
-package com.pluralsight;
+package com.pluralsight.vehicle;
 import com.pluralsight.utils.ColorCodes;
 
 public class Vehicle {

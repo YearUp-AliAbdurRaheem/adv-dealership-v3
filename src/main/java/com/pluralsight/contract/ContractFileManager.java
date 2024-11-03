@@ -1,4 +1,7 @@
-package com.pluralsight;
+package com.pluralsight.contract;
+
+import com.pluralsight.addons.AddOn;
+import com.pluralsight.vehicle.Vehicle;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -17,7 +20,7 @@ public class ContractFileManager {
         loadContracts();
     }
 
-    private void loadContracts() {
+    public void loadContracts() {
         contractRecords.clear(); // Clear existing records
         
         try (BufferedReader reader = new BufferedReader(new FileReader(FILENAME))) {

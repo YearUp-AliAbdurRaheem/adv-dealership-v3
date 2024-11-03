@@ -1,9 +1,9 @@
-package com.pluralsight.Admin;
+package com.pluralsight.admin;
 
-import com.pluralsight.Contract;
-import com.pluralsight.ContractFileManager;
-import com.pluralsight.SalesContract;
-import com.pluralsight.LeaseContract;
+import com.pluralsight.contract.Contract;
+import com.pluralsight.contract.ContractFileManager;
+import com.pluralsight.contract.SalesContract;
+import com.pluralsight.contract.LeaseContract;
 import com.pluralsight.utils.Console;
 import java.util.List;
 
@@ -33,6 +33,7 @@ public class AdminUserInterface {
         contractManager = new ContractFileManager(); // reload contracts
 
         String options = """
+                
                 ADMIN INTERFACE
                 Please select from the following choices:
                 1 - All

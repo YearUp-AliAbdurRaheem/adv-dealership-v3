@@ -1,4 +1,6 @@
-package com.pluralsight;
+package com.pluralsight.contract;
+
+import com.pluralsight.vehicle.Vehicle;
 
 public class LeaseContract extends Contract {
     // These rates determine the lease costs

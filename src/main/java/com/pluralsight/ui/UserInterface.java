@@ -1,11 +1,20 @@
-package com.pluralsight;
+package com.pluralsight.ui;
 
+import com.pluralsight.addons.AddOn;
+import com.pluralsight.addons.AddOnManager;
+import com.pluralsight.contract.Contract;
+import com.pluralsight.contract.ContractFileManager;
+import com.pluralsight.contract.LeaseContract;
+import com.pluralsight.contract.SalesContract;
+import com.pluralsight.dealership.Dealership;
+import com.pluralsight.dealership.DealershipFileManager;
 import com.pluralsight.utils.Console;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import com.pluralsight.Admin.AdminUserInterface;
+import com.pluralsight.admin.AdminUserInterface;
+import com.pluralsight.vehicle.Vehicle;
 
 public class UserInterface {
     private Dealership dealership;
@@ -58,7 +67,7 @@ public class UserInterface {
         // User Interface Loop
         do {
             contracts = new ContractFileManager().getAllContracts();
-            System.out.println("Welcome to " + dealership.getName() + "!");
+            System.out.println("\nWelcome to " + dealership.getName() + "!");
             input = Console.PromptForString(options);
             try {
                 selection = Integer.parseInt(input);

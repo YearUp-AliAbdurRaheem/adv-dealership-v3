@@ -1,12 +1,14 @@
-package com.pluralsight;
+package com.pluralsight.contract;
+
+import com.pluralsight.vehicle.Vehicle;
 
 public class SalesContract extends Contract {
     private static final double SALES_TAX_RATE = 0.05;
     private static final double PROCESSING_FEE = 295;
     private boolean isFinanced;
 
-    public SalesContract(String date, String customerName, String customerEmail, 
-                        Vehicle vehicle, boolean isFinanced) {
+    public SalesContract(String date, String customerName, String customerEmail,
+                         Vehicle vehicle, boolean isFinanced) {
         super(date, customerName, customerEmail, vehicle);
         this.isFinanced = isFinanced;
     }

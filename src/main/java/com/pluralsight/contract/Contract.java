@@ -1,4 +1,7 @@
-package com.pluralsight;
+package com.pluralsight.contract;
+
+import com.pluralsight.addons.AddOn;
+import com.pluralsight.vehicle.Vehicle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +23,7 @@ public abstract class Contract {
 
     // Abstract getters
     public abstract double getTotalPrice(); // its public so it can be accessed by the AdminUserInterface wich is in a different package.
-    abstract double getMonthlyPayment();
+    public abstract double getMonthlyPayment();
 
     // Getters and setters
     public String getDate() { return date; }

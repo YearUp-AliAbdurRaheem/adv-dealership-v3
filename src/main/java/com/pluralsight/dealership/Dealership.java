@@ -1,4 +1,6 @@
-package com.pluralsight;
+package com.pluralsight.dealership;
+
+import com.pluralsight.vehicle.Vehicle;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
