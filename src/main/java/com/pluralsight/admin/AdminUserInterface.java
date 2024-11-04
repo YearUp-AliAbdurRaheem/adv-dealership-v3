@@ -80,28 +80,28 @@ public class AdminUserInterface {
 
     private void displayAllSalesContracts() {
         List<Contract> contracts = contractManager.getAllContracts().stream()
-                .filter(c -> c instanceof SalesContract)
+                .filter(SalesContract.class::isInstance)
                 .toList();
         displayContracts(contracts);
     }
 
     private void displayLastNSalesContracts(int n) {
         List<Contract> contracts = contractManager.getAllContracts().stream()
-                .filter(c -> c instanceof SalesContract)
+                .filter(SalesContract.class::isInstance)
                 .toList();
         displayContracts(getLastN(contracts, n));
     }
 
     private void displayAllLeaseContracts() {
         List<Contract> contracts = contractManager.getAllContracts().stream()
-                .filter(c -> c instanceof LeaseContract)
+                .filter(LeaseContract.class::isInstance)
                 .toList();
         displayContracts(contracts);
     }
 
     private void displayLastNLeaseContracts(int n) {
         List<Contract> contracts = contractManager.getAllContracts().stream()
-                .filter(c -> c instanceof LeaseContract)
+                .filter(LeaseContract.class::isInstance)
                 .toList();
         displayContracts(getLastN(contracts, n));
     }
