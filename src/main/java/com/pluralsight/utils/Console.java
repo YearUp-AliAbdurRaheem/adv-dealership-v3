@@ -69,5 +69,14 @@ public class Console {
         return  userinput;
     }
 
+    public static String PromptForPassword(String prompt) { // This lets you hide the password input in the console
+        java.io.Console systemConsole = System.console();
+        if (systemConsole == null) {
+            return PromptForString(prompt);
+        }
+        System.out.print(prompt);
+        char[] passwordChars = systemConsole.readPassword();
+        return new String(passwordChars);
+    }
 
 }

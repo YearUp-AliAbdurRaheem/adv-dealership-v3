@@ -5,12 +5,14 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.pluralsight.utils.Console;
 
 public class AuthenticationManager {
-    private final String LOGIN_FILE = "login.csv";
+    private static final String LOGIN_FILE = "login.csv";
     private HashMap<String, String> logins;
 
     public AuthenticationManager() {
@@ -38,28 +40,27 @@ public class AuthenticationManager {
         if (logins.isEmpty()) {
             System.out.println("No logins found. Please create an admin account first.");
             do {
-                username = Console.PromptForString("Enter your username: ");
+                username = Console.PromptForString("Username: ");
             } while (username.isEmpty());
     
             do {
-                password = hashPassword(Console.PromptForString("Enter your password: "));
+                password = hashPassword(Console.PromptForPassword("Password: "));
             } while (password.isEmpty());
             createAdmin(username, password);
             return true;
         }
 
         do {
-            username = Console.PromptForString("Enter your username: ");
+            username = Console.PromptForString("Username: ");
         } while (username.isEmpty());
 
         do {
-            password = hashPassword(Console.PromptForString("Enter your password: "));
+            password = hashPassword(Console.PromptForPassword("Password: "));
         } while (password.isEmpty());
 
-        //System.out.println(password + " " + logins.get(username));
 
         if (logins.containsKey(username) && logins.get(username).equals(password)) {
-            System.out.println("Login successful!");
+            System.out.println("Logged in as " + username + ".");
             return true;
         } else {
             System.out.println("Invalid username or password.");
@@ -75,7 +76,7 @@ public class AuthenticationManager {
 
     private void saveLogins() {
         try (BufferedWriter bWriter = new BufferedWriter(new FileWriter(LOGIN_FILE))) {
-            for (HashMap.Entry<String, String> entry : logins.entrySet()) {
+            for (Map.Entry<String, String> entry : logins.entrySet()) {
                 bWriter.write(entry.getKey() + "|" + entry.getValue());
                 bWriter.newLine();
             }
@@ -87,7 +88,7 @@ public class AuthenticationManager {
     private String hashPassword(String password) {
         try {
             java.security.MessageDigest digest = java.security.MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(password.getBytes("UTF-8"));
+            byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
             return new String(hash);
         } catch (Exception e) {
             throw new RuntimeException(e);

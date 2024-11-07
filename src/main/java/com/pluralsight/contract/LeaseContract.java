@@ -4,10 +4,10 @@ import com.pluralsight.vehicle.Vehicle;
 
 public class LeaseContract extends Contract {
     // These rates determine the lease costs
-    private static final double LEASE_FEE_RATE = 0.07;        // 7% of vehicle price
+    private static final double LEASE_FEE_RATE = 0.07;           // 7% of vehicle price
     private static final double EXPECTED_END_VALUE_RATE = 0.50;  // 50% of vehicle price
-    private static final double FINANCE_RATE = 0.04;          // 4% yearly interest
-    private static final int LEASE_TERM_MONTHS = 36;          // the 3-year lease term
+    private static final double FINANCE_RATE = 0.04;             // 4% yearly interest
+    private static final int LEASE_TERM_MONTHS = 36;             // the 3-year lease term
 
     private double expectedEndingValue;
     private double leaseFee;
