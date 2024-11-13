@@ -65,7 +65,7 @@ public class Console {
     public static float PromptForFloat(String prompt){
         System.out.print(prompt);
         String value = scanner.nextLine();
-        float userinput =Float.parseFloat(value);
+        float userinput = Float.parseFloat(value);
         return  userinput;
     }
 
