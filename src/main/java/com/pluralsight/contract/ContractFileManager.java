@@ -1,5 +1,6 @@
 package com.pluralsight.contract;
 
+import com.pluralsight.Program;
 import com.pluralsight.addons.AddOn;
 import com.pluralsight.vehicle.Vehicle;
 
@@ -8,6 +9,10 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,38 +27,62 @@ public class ContractFileManager {
 
     public void loadContracts() {
         contractRecords.clear(); // Clear existing records
-        
-        try (BufferedReader reader = new BufferedReader(new FileReader(FILENAME))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split("\\|");
-                
-                // Get common contract data
-                String type = data[0];
-                String date = data[1];
-                String customerName = data[2];
-                String customerEmail = data[3];
-                
-                Vehicle vehicle = new Vehicle(
-                    Integer.parseInt(data[4]),    // VIN
-                    Integer.parseInt(data[5]),    // Year
-                    data[6],                      // Make
-                    data[7],                      // Model
-                    data[8],                      // Type
-                    data[9],                      // Color
-                    Integer.parseInt(data[10]),   // Odometer
-                    Double.parseDouble(data[11])  // Price
-                );
 
-                if (type.equals("SALE")) {
-                    boolean isFinanced = data[16].equals("YES");
-                    contractRecords.add(new SalesContract(date, customerName, customerEmail, vehicle, isFinanced));
-                } else if (type.equals("LEASE")) {
-                    contractRecords.add(new LeaseContract(date, customerName, customerEmail, vehicle));
+        try (Connection connection = Program.dataSource.getConnection();) {
+            // Load Sales Contracts
+            String salesQuery = "SELECT * FROM SalesContracts";
+            try (Statement statement = connection.createStatement();
+                 ResultSet salesResultSet = statement.executeQuery(salesQuery)) {
+                while (salesResultSet.next()) {
+                    Vehicle vehicle = new Vehicle(
+                        salesResultSet.getInt("vin"),    // VIN
+                        salesResultSet.getInt("vehicle_year"),   // Year
+                        salesResultSet.getString("make"), // Make
+                        salesResultSet.getString("model"), // Model
+                        salesResultSet.getString("vehicle_type"), // Type
+                        salesResultSet.getString("color"), // Color
+                        (int) salesResultSet.getLong("odometer"), // Odometer is BIGINT so it has to be cast
+                        salesResultSet.getDouble("vehicle_price")  // Price
+                    );
+
+                    boolean isFinanced = salesResultSet.getBoolean("is_financed");
+                    contractRecords.add(new SalesContract(
+                        salesResultSet.getString("date"),
+                        salesResultSet.getString("customer_name"),
+                        salesResultSet.getString("customer_email"),
+                        vehicle,
+                        isFinanced
+                    ));
                 }
             }
-        } catch (IOException e) {
-            System.out.println("Error loading contracts: " + e.getMessage());
+
+            // Load Lease Contracts
+            String leaseQuery = "SELECT * FROM LeaseContracts";
+            try (Statement statement = connection.createStatement();
+                 ResultSet leaseResultSet = statement.executeQuery(leaseQuery)) {
+                while (leaseResultSet.next()) {
+                    Vehicle vehicle = new Vehicle(
+                        leaseResultSet.getInt("vin"),    // VIN
+                        leaseResultSet.getInt("vehicle_year"),   // Year
+                        leaseResultSet.getString("make"), // Make
+                        leaseResultSet.getString("model"), // Model
+                        leaseResultSet.getString("vehicle_type"), // Type
+                        leaseResultSet.getString("color"), // Color
+                        (int) leaseResultSet.getLong("odometer"), // Odometer
+                        leaseResultSet.getDouble("vehicle_price")  // Price
+                    );
+
+                    contractRecords.add(new LeaseContract(
+                        leaseResultSet.getString("date"),
+                        leaseResultSet.getString("customer_name"),
+                        leaseResultSet.getString("customer_email"),
+                        vehicle
+                    ));
+                }
+            }
+        }
+        catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
     }
 

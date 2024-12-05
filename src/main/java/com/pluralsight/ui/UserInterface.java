@@ -43,6 +43,8 @@ public class UserInterface {
 
     
     public void display() {
+        
+
         initializeDealership(); // Loads the dealership from the file.
         String options = """
                 Please select from the following choices:
