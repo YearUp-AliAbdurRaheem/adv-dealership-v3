@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -87,63 +88,75 @@ public class ContractFileManager {
     }
 
     public void saveContract(Contract contract) {
-        try (BufferedWriter bWriter = new BufferedWriter(new FileWriter(FILENAME, true))) {
-            StringBuilder line = new StringBuilder();
+        String insertQuery = "";
+        
+        if (contract instanceof SalesContract) {
+            insertQuery = """
+                INSERT INTO SalesContracts (
+                    date, customer_name, customer_email, vin, vehicle_year, make, model, 
+                    vehicle_type, color, odometer, vehicle_price, sales_tax, recording_fee, 
+                    processing_fee, total_price, is_financed, monthly_payment
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """;
+        } else if (contract instanceof LeaseContract) {
+            insertQuery = """
+                INSERT INTO LeaseContracts (
+                    date, customer_name, customer_email, vin, vehicle_year, make, model, 
+                    vehicle_type, color, odometer, vehicle_price, expected_ending_value, 
+                    lease_fee, total_price, monthly_payment
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """;
+        }
 
+        try (Connection connection = Program.dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
+            
+            // Set parameters for SalesContract
             if (contract instanceof SalesContract) {
-                line.append("SALE|")
-                .append(contract.getDate()).append("|")
-                .append(contract.getCustomerName()).append("|")
-                .append(contract.getCustomerEmail()).append("|")
-                .append(contract.getVehicle().getVin()).append("|")
-                .append(contract.getVehicle().getYear()).append("|")
-                .append(contract.getVehicle().getMake()).append("|")
-                .append(contract.getVehicle().getModel()).append("|")
-                .append(contract.getVehicle().getVehicleType()).append("|")
-                .append(contract.getVehicle().getColor()).append("|")
-                .append(contract.getVehicle().getOdometer()).append("|")
-                .append(String.format("%.2f", contract.getVehicle().getPrice())).append("|")
-                .append(String.format("%.2f|", contract.getTotalPrice() * 0.05))  // Sales tax
-                .append("100.00|")  // Recording fee is this arbitrary?
-                .append(SalesContract.getProcessingFee()).append("|")
-                .append(contract.getTotalPrice()).append("|")
-                .append(((SalesContract)contract).isFinanced() ? "YES|" : "NO|") // Casting contract to SalesContract to access isFinanced() method
-                .append(((SalesContract)contract).isFinanced() ? contract.getMonthlyPayment() : 0.0); // 0 if not financed
+                SalesContract salesContract = (SalesContract) contract;
+                preparedStatement.setString(1, salesContract.getDate());
+                preparedStatement.setString(2, salesContract.getCustomerName());
+                preparedStatement.setString(3, salesContract.getCustomerEmail());
+                preparedStatement.setInt(4, salesContract.getVehicle().getVin());
+                preparedStatement.setInt(5, salesContract.getVehicle().getYear());
+                preparedStatement.setString(6, salesContract.getVehicle().getMake());
+                preparedStatement.setString(7, salesContract.getVehicle().getModel());
+                preparedStatement.setString(8, salesContract.getVehicle().getVehicleType());
+                preparedStatement.setString(9, salesContract.getVehicle().getColor());
+                preparedStatement.setInt(10, (int) salesContract.getVehicle().getOdometer());
+                preparedStatement.setDouble(11, salesContract.getVehicle().getPrice());
+                preparedStatement.setDouble(12, salesContract.getTotalPrice() * 0.05);
+                preparedStatement.setDouble(13, 100.00);
+                preparedStatement.setDouble(14, SalesContract.getProcessingFee());
+                preparedStatement.setDouble(15, salesContract.getTotalPrice());
+                preparedStatement.setBoolean(16, salesContract.isFinanced());
+                preparedStatement.setDouble(17, salesContract.isFinanced() ? salesContract.getMonthlyPayment() : 0.0);
             }
-
+            // Set parameters for LeaseContract
             else if (contract instanceof LeaseContract) {
-                line.append("LEASE|")
-                .append(contract.getDate()).append("|")
-                .append(contract.getCustomerName()).append("|")
-                .append(contract.getCustomerEmail()).append("|")
-                .append(contract.getVehicle().getVin()).append("|")
-                .append(contract.getVehicle().getYear()).append("|")
-                .append(contract.getVehicle().getMake()).append("|")
-                .append(contract.getVehicle().getModel()).append("|")
-                .append(contract.getVehicle().getVehicleType()).append("|")
-                .append(contract.getVehicle().getColor()).append("|")
-                .append(contract.getVehicle().getOdometer()).append("|")
-                .append(String.format("%.2f", contract.getVehicle().getPrice())).append("|")
-                .append(((LeaseContract)contract).getExpectedEndingValue()).append("|")
-                .append(((LeaseContract)contract).getLeaseFee()).append("|")
-                .append(contract.getTotalPrice()).append("|")
-                .append(contract.getMonthlyPayment());
+                LeaseContract leaseContract = (LeaseContract) contract;
+                preparedStatement.setString(1, leaseContract.getDate());
+                preparedStatement.setString(2, leaseContract.getCustomerName());
+                preparedStatement.setString(3, leaseContract.getCustomerEmail());
+                preparedStatement.setInt(4, leaseContract.getVehicle().getVin());
+                preparedStatement.setInt(5, leaseContract.getVehicle().getYear());
+                preparedStatement.setString(6, leaseContract.getVehicle().getMake());
+                preparedStatement.setString(7, leaseContract.getVehicle().getModel());
+                preparedStatement.setString(8, leaseContract.getVehicle().getVehicleType());
+                preparedStatement.setString(9, leaseContract.getVehicle().getColor());
+                preparedStatement.setInt(10, (int) leaseContract.getVehicle().getOdometer());
+                preparedStatement.setDouble(11, leaseContract.getVehicle().getPrice());
+                preparedStatement.setDouble(12, leaseContract.getExpectedEndingValue());
+                preparedStatement.setDouble(13, leaseContract.getLeaseFee());
+                preparedStatement.setDouble(14, leaseContract.getTotalPrice());
+                preparedStatement.setDouble(15, leaseContract.getMonthlyPayment());
             }
 
-            for (AddOn addOn : contract.getAddOns()) {
-                line.append("|")
-                .append(addOn.getName())
-                .append("|")
-                .append(addOn.getPrice());
-            }
-
-            bWriter.write(line.toString());
-            bWriter.newLine();
-            bWriter.close();
-            loadContracts(); // Reload contracts after saving
+            preparedStatement.executeUpdate(); // Execute the query and add the new contract
+            loadContracts(); // Reload contracts
         } 
-        catch (IOException e) {
-            System.out.println("Error saving contract: " + e.getMessage()); // LOOKINTO: How can i close the bWriter here?
+        catch (SQLException e) {
+            System.out.println("Error saving contract: " + e.getMessage());
         }
     }
 
