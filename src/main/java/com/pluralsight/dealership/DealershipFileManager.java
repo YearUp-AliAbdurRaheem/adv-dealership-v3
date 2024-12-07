@@ -6,47 +6,58 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 public class DealershipFileManager {
     private static final String FILE_NAME = "dealership.csv";
 
     public Dealership getDealership() {
         Dealership dealership = null;
-        try (BufferedReader br = new BufferedReader(new FileReader(FILE_NAME))) {
-            // Read the first line with the dealership info
-            String line = br.readLine();
-            if (line != null) {
-                // Grab the dealership details
-                String[] dealershipInfo = line.split("\\|");
-                String name = dealershipInfo[0];
-                String address = dealershipInfo[1];
-                String phone = dealershipInfo[2];
-                dealership = new Dealership(name, address, phone);
 
-                // Read and add vehicles to the dealership
-                while ((line = br.readLine()) != null) {
-                    String[] vehicleData = line.split("\\|");
-                    Vehicle vehicle = createVehicle(vehicleData);
-                    dealership.addVehicle(vehicle);
+        try (Connection connection = Program.dataSource.getConnection();) {
+            String dealershipQuery = "SELECT * FROM dealerships"; // Query to get dealership details
+            try (Statement statement = connection.createStatement();
+                 ResultSet resultSet = statement.executeQuery(dealershipQuery)) {
+                if (resultSet.next()) {
+                    // Grab the dealership details
+                    String name = resultSet.getString("name");
+                    String address = resultSet.getString("address");
+                    String phone = resultSet.getString("phone");
+                    dealership = new Dealership(name, address, phone);
+
+                    // Now load vehicles associated with this dealership
+                    String vehicleQuery = """
+                        SELECT v.* FROM vehicles v
+                        JOIN inventory i ON v.vin = i.VIN
+                        WHERE i.dealership_id = ?
+                    """;
+                    try (PreparedStatement vehicleStatement = connection.prepareStatement(vehicleQuery)) {
+                        vehicleStatement.setInt(1, dealership.getId()); // Assuming you have a method to get the dealership ID
+                        try (ResultSet vehicleResultSet = vehicleStatement.executeQuery()) {
+                            while (vehicleResultSet.next()) {
+                                Vehicle vehicle = new Vehicle(
+                                    vehicleResultSet.getInt("vin"),
+                                    vehicleResultSet.getInt("year"),
+                                    vehicleResultSet.getString("make"),
+                                    vehicleResultSet.getString("model"),
+                                    vehicleResultSet.getString("vehicle_type"),
+                                    vehicleResultSet.getString("color"),
+                                    vehicleResultSet.getLong("odometer"), // Keep as long
+                                    vehicleResultSet.getDouble("price")
+                                );
+                                dealership.addVehicle(vehicle);
+                            }
+                        }
+                    }
                 }
             }
-        } catch (IOException e) {
-            System.out.println("Error reading dealership file: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("Error retrieving dealership: " + e.getMessage());
         }
         return dealership;
-    }
-
-    private Vehicle createVehicle(String[] data) { // Helper method to extract some logic from the getDealership method.
-        int vin = Integer.parseInt(data[0]);
-        int year = Integer.parseInt(data[1]);
-        String make = data[2];
-        String model = data[3];
-        String vehicleType = data[4];
-        String color = data[5];
-        int odometer = Integer.parseInt(data[6]);
-        double price = Double.parseDouble(data[7]);
-        // Create and return a new Vehicle object, this is added to its inventory.
-        return new Vehicle(vin, year, make, model, vehicleType, color, odometer, price);
     }
 
     public void saveDealership(Dealership dealership) {

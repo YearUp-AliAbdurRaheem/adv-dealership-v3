@@ -123,7 +123,7 @@ public class ContractFileManager {
                 preparedStatement.setString(7, salesContract.getVehicle().getModel());
                 preparedStatement.setString(8, salesContract.getVehicle().getVehicleType());
                 preparedStatement.setString(9, salesContract.getVehicle().getColor());
-                preparedStatement.setInt(10, (int) salesContract.getVehicle().getOdometer());
+                preparedStatement.setInt(10, salesContract.getVehicle().getOdometer());
                 preparedStatement.setDouble(11, salesContract.getVehicle().getPrice());
                 preparedStatement.setDouble(12, salesContract.getTotalPrice() * 0.05);
                 preparedStatement.setDouble(13, 100.00);
@@ -144,7 +144,7 @@ public class ContractFileManager {
                 preparedStatement.setString(7, leaseContract.getVehicle().getModel());
                 preparedStatement.setString(8, leaseContract.getVehicle().getVehicleType());
                 preparedStatement.setString(9, leaseContract.getVehicle().getColor());
-                preparedStatement.setInt(10, (int) leaseContract.getVehicle().getOdometer());
+                preparedStatement.setInt(10, leaseContract.getVehicle().getOdometer());
                 preparedStatement.setDouble(11, leaseContract.getVehicle().getPrice());
                 preparedStatement.setDouble(12, leaseContract.getExpectedEndingValue());
                 preparedStatement.setDouble(13, leaseContract.getLeaseFee());
